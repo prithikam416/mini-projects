@@ -92,7 +92,7 @@ Resume editing feature
 👩‍💻 Author
 
 Prithika M
-B.Sc Computer Science Student
+Btech  Computer Science Student
 
 📜 License
 
