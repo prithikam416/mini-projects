@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Generator</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-box, .resume-box {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 50%;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        #resume-preview {
+            min-height: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        #resume-preview h3 {
+            color: #4CAF50;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            .form-box, .resume-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Resume Generator</h1>
+
+<div class="container">
+
+    <!-- FORM -->
+    <div class="form-box">
+        <h2>Enter Your Details</h2>
+
+        <input id="name" placeholder="Full Name">
+        <input id="email" placeholder="Email">
+        <input id="phone" placeholder="Phone Number">
+        <input type="file" id="photo" accept="image/*">
+
+        <textarea id="skills" placeholder="Skills (comma separated)"></textarea>
+        <textarea id="education" placeholder="Education Details"></textarea>
+        <textarea id="experience" placeholder="Work Experience"></textarea>
+
+        <button onclick="generateResume()">Generate Resume</button>
+        <button onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <!-- RESUME PREVIEW -->
+    <div class="resume-box">
+        <h2>Resume Preview</h2>
+        <div id="resume-preview"></div>
+    </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function generateResume() {
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const skills = document.getElementById("skills").value;
+    const education = document.getElementById("education").value;
+    const experience = document.getElementById("experience").value;
+    const photo = document.getElementById("photo").files[0];
+
+    if (!name || !email || !phone) {
+        alert("Please fill Name, Email and Phone");
+        return;
+    }
+
+    const skillsList = skills
+        ? skills.split(",").map(skill => `<li>${skill.trim()}</li>`).join("")
+        : "";
+
+    let photoHTML = "";
+    if (photo) {
+        const photoURL = URL.createObjectURL(photo);
+        photoHTML = `<img src="${photoURL}" class="profile-photo">`;
+    }
+
+    document.getElementById("resume-preview").innerHTML = `
+        <div style="text-align:center;">
+            ${photoHTML}
+            <h2>${name}</h2>
+            <p>${email} | ${phone}</p>
+        </div>
+
+        <h3>Skills</h3>
+        <ul>${skillsList}</ul>
+
+        <h3>Education</h3>
+        <p>${education}</p>
+
+        <h3>Experience</h3>
+        <p>${experience}</p>
+    `;
+}
+
+function downloadPDF() {
+    const resume = document.getElementById("resume-preview");
+
+    html2pdf().set({
+        margin: 10,
+        filename: 'Resume.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(resume).save();
+}
+</script>
+
+</body>
+</html>
